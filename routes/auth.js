@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import logger from '../utils/logger.js';
 import { query } from '../config/database.js';
 import { validateEmail, validatePassword } from '../utils/validators.js';
+import { sendWelcomeEmail } from '../services/emailService.js';
 
 const router = express.Router();
 
@@ -58,6 +59,9 @@ router.post('/signup', async (req, res) => {
     );
 
     logger.info('✅ User signup successful', { email, plan });
+
+    // Send welcome email (non-blocking)
+    sendWelcomeEmail({ email, plan }).catch(err => logger.error('Welcome email failed:', err));
 
     res.status(201).json({
       success: true,
