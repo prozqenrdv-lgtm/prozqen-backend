@@ -1,5 +1,5 @@
 import { callClaude, calculateTokenCost } from '../config/anthropic.js';
-import logger from '../utils/logger.js';
+
 
 /**
  * AGENT #3: FOLLOW-UP AUTOMATION
@@ -12,7 +12,7 @@ import logger from '../utils/logger.js';
 
 export async function followupAutomationAgent(prospect, communicationHistory, userContext) {
   try {
-    logger.info('📧 Follow-up Automation agent started', {
+    console.log('📧 Follow-up Automation agent started', {
       prospectName: prospect.name,
       daysSinceContact: prospect.days_since_last_contact || 0
     });
@@ -91,7 +91,7 @@ RÉPONDS UNIQUEMENT EN JSON:
     try {
       result = JSON.parse(response.content);
     } catch (error) {
-      logger.warn('Failed to parse Claude response');
+      console.warn('Failed to parse Claude response');
       result = {
         raw_response: response.content,
         error: 'Could not parse JSON'
@@ -101,7 +101,7 @@ RÉPONDS UNIQUEMENT EN JSON:
     // Calculate cost
     const cost = calculateTokenCost(response.tokens.input, response.tokens.output);
 
-    logger.info('✅ Follow-up Automation agent completed', {
+    console.log('✅ Follow-up Automation agent completed', {
       prospectName: prospect.name,
       escalationLevel,
       tokensUsed: response.tokens.total,
@@ -121,7 +121,7 @@ RÉPONDS UNIQUEMENT EN JSON:
     };
 
   } catch (error) {
-    logger.error('❌ Follow-up Automation agent error:', error);
+    console.error('❌ Follow-up Automation agent error:', error);
     return {
       success: false,
       agent: 'followup-automation',

@@ -1,5 +1,5 @@
 import express from 'express';
-import logger from '../utils/logger.js';
+
 import { authenticateToken } from './auth.js';
 import { query } from '../config/database.js';
 
@@ -83,7 +83,7 @@ router.get('/dashboard', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Dashboard error:', error);
+    console.error('Dashboard error:', error);
     res.status(500).json({ error: 'Failed to get dashboard data' });
   }
 });
@@ -110,7 +110,7 @@ router.get('/conversions', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Conversions error:', error);
+    console.error('Conversions error:', error);
     res.status(500).json({ error: 'Failed to get conversion data' });
   }
 });
@@ -154,7 +154,7 @@ router.get('/roi', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('ROI calculation error:', error);
+    console.error('ROI calculation error:', error);
     res.status(500).json({ error: 'Failed to calculate ROI' });
   }
 });

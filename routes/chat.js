@@ -1,6 +1,6 @@
 import express from 'express';
 import { callClaude } from '../config/anthropic.js';
-import logger from '../utils/logger.js';
+
 import { authenticateToken } from './auth.js';
 
 const router = express.Router();
@@ -62,7 +62,7 @@ Sois professionnel, concis et actionnable.`;
       conversationHistory.set(convId, history.slice(-20));
     }
 
-    logger.info('Chat message processed', {
+    console.log('Chat message processed', {
       userId: req.user.userId,
       convId: convId.substring(0, 20) + '...',
       tokensUsed: response.tokens.total
@@ -78,7 +78,7 @@ Sois professionnel, concis et actionnable.`;
     });
 
   } catch (error) {
-    logger.error('Chat message error:', error);
+    console.error('Chat message error:', error);
     res.status(500).json({ error: 'Failed to process chat message' });
   }
 });
@@ -102,7 +102,7 @@ router.get('/conversations', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Get conversations error:', error);
+    console.error('Get conversations error:', error);
     res.status(500).json({ error: 'Failed to get conversations' });
   }
 });

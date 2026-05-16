@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
-import logger from '../utils/logger.js';
+
 import { query } from '../config/database.js';
 import { validateEmail, validatePassword } from '../utils/validators.js';
 import { sendWelcomeEmail } from '../services/emailService.js';
@@ -58,10 +58,10 @@ router.post('/signup', async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRY || '7d' }
     );
 
-    logger.info('✅ User signup successful', { email, plan });
+    console.log('✅ User signup successful', { email, plan });
 
     // Send welcome email (non-blocking)
-    sendWelcomeEmail({ email, plan }).catch(err => logger.error('Welcome email failed:', err));
+    sendWelcomeEmail({ email, plan }).catch(err => console.error('Welcome email failed:', err));
 
     res.status(201).json({
       success: true,
@@ -76,7 +76,7 @@ router.post('/signup', async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Signup error:', error);
+    console.error('Signup error:', error);
     res.status(500).json({ error: 'Signup failed' });
   }
 });
@@ -118,7 +118,7 @@ router.post('/login', async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRY || '7d' }
     );
 
-    logger.info('✅ User login successful', { email });
+    console.log('✅ User login successful', { email });
 
     res.json({
       success: true,
@@ -134,7 +134,7 @@ router.post('/login', async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Login error:', error);
+    console.error('Login error:', error);
     res.status(500).json({ error: 'Login failed' });
   }
 });
@@ -160,7 +160,7 @@ router.get('/me', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Get user error:', error);
+    console.error('Get user error:', error);
     res.status(500).json({ error: 'Failed to get user' });
   }
 });

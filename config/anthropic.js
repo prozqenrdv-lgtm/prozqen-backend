@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import dotenv from 'dotenv';
-import logger from '../utils/logger.js';
+
 
 dotenv.config({ path: '.env.local' });
 
@@ -50,7 +50,7 @@ export async function callClaude(messages, options = {}) {
     });
 
     // Log API usage
-    logger.debug('Claude API call:', {
+    console.log('Claude API call:', {
       model: options.model || CLAUDE_MODEL,
       inputTokens: response.usage.input_tokens,
       outputTokens: response.usage.output_tokens,
@@ -66,7 +66,7 @@ export async function callClaude(messages, options = {}) {
       }
     };
   } catch (error) {
-    logger.error('Claude API error:', error);
+    console.error('Claude API error:', error);
     throw new Error(`Claude API call failed: ${error.message}`);
   }
 }
@@ -78,7 +78,7 @@ export async function callClaude(messages, options = {}) {
 export function calculateTokenCost(inputTokens, outputTokens, model = CLAUDE_MODEL) {
   const costs = TOKEN_COSTS[model];
   if (!costs) {
-    logger.warn(`Unknown model: ${model}`);
+    console.warn(`Unknown model: ${model}`);
     return 0;
   }
 
@@ -105,10 +105,10 @@ export async function verifyAnthropicKey() {
       ]
     });
 
-    logger.info('✅ Anthropic API key verified successfully');
+    console.log('✅ Anthropic API key verified successfully');
     return true;
   } catch (error) {
-    logger.error('❌ Anthropic API key verification failed:', error.message);
+    console.error('❌ Anthropic API key verification failed:', error.message);
     return false;
   }
 }
@@ -128,9 +128,9 @@ export async function initializeAnthropicClient() {
       throw new Error('Invalid Anthropic API key');
     }
 
-    logger.info('✅ Anthropic client initialized successfully');
+    console.log('✅ Anthropic client initialized successfully');
   } catch (error) {
-    logger.error('Failed to initialize Anthropic client:', error);
+    console.error('Failed to initialize Anthropic client:', error);
     throw error;
   }
 }

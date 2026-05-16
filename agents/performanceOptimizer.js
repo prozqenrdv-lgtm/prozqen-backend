@@ -1,5 +1,5 @@
 import { callClaude, calculateTokenCost } from '../config/anthropic.js';
-import logger from '../utils/logger.js';
+
 
 /**
  * AGENT #6: PERFORMANCE OPTIMIZER (PRO ONLY)
@@ -12,7 +12,7 @@ import logger from '../utils/logger.js';
 
 export async function performanceOptimizerAgent(performanceData, conversions) {
   try {
-    logger.info('🚀 Performance Optimizer agent started', {
+    console.log('🚀 Performance Optimizer agent started', {
       totalMessages: performanceData.total_messages_sent,
       conversionRate: performanceData.conversion_rate
     });
@@ -101,7 +101,7 @@ RÉPONDS UNIQUEMENT EN JSON:
     try {
       result = JSON.parse(response.content);
     } catch (error) {
-      logger.warn('Failed to parse Claude response');
+      console.warn('Failed to parse Claude response');
       result = {
         raw_response: response.content,
         error: 'Could not parse JSON'
@@ -111,7 +111,7 @@ RÉPONDS UNIQUEMENT EN JSON:
     // Calculate cost
     const cost = calculateTokenCost(response.tokens.input, response.tokens.output);
 
-    logger.info('✅ Performance Optimizer agent completed', {
+    console.log('✅ Performance Optimizer agent completed', {
       tokensUsed: response.tokens.total,
       cost: `$${cost.toFixed(6)}`
     });
@@ -127,7 +127,7 @@ RÉPONDS UNIQUEMENT EN JSON:
     };
 
   } catch (error) {
-    logger.error('❌ Performance Optimizer agent error:', error);
+    console.error('❌ Performance Optimizer agent error:', error);
     return {
       success: false,
       agent: 'performance-optimizer',

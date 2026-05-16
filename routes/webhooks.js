@@ -1,5 +1,5 @@
 import express from 'express';
-import logger from '../utils/logger.js';
+
 import { query } from '../config/database.js';
 
 const router = express.Router();
@@ -13,7 +13,7 @@ router.post('/stripe', async (req, res) => {
   try {
     const event = req.body;
 
-    logger.info('Stripe webhook received', { eventType: event.type });
+    console.log('Stripe webhook received', { eventType: event.type });
 
     // TODO: Verify Stripe signature
     // For MVP: skip verification
@@ -32,13 +32,13 @@ router.post('/stripe', async (req, res) => {
         break;
 
       default:
-        logger.info('Unhandled event type:', event.type);
+        console.log('Unhandled event type:', event.type);
     }
 
     res.json({ received: true });
 
   } catch (error) {
-    logger.error('Stripe webhook error:', error);
+    console.error('Stripe webhook error:', error);
     res.status(500).json({ error: 'Webhook processing failed' });
   }
 });
@@ -52,7 +52,7 @@ router.post('/calendly', async (req, res) => {
   try {
     const event = req.body;
 
-    logger.info('Calendly webhook received', { eventType: event.event });
+    console.log('Calendly webhook received', { eventType: event.event });
 
     // TODO: Implement Calendly webhook handling
     // For MVP: placeholder
@@ -60,7 +60,7 @@ router.post('/calendly', async (req, res) => {
     res.json({ received: true });
 
   } catch (error) {
-    logger.error('Calendly webhook error:', error);
+    console.error('Calendly webhook error:', error);
     res.status(500).json({ error: 'Webhook processing failed' });
   }
 });
@@ -71,7 +71,7 @@ router.post('/calendly', async (req, res) => {
 
 async function handlePaymentSuccess(charge) {
   try {
-    logger.info('✅ Payment successful', {
+    console.log('✅ Payment successful', {
       chargeId: charge.id,
       amount: charge.amount
     });
@@ -79,13 +79,13 @@ async function handlePaymentSuccess(charge) {
     // TODO: Update user subscription in database
     // UPDATE users SET subscription_active = true WHERE stripe_customer_id = $1
   } catch (error) {
-    logger.error('Error handling payment success:', error);
+    console.error('Error handling payment success:', error);
   }
 }
 
 async function handlePaymentFailed(charge) {
   try {
-    logger.error('❌ Payment failed', {
+    console.error('❌ Payment failed', {
       chargeId: charge.id,
       amount: charge.amount,
       reason: charge.failure_message
@@ -93,20 +93,20 @@ async function handlePaymentFailed(charge) {
 
     // TODO: Notify user of failed payment
   } catch (error) {
-    logger.error('Error handling payment failure:', error);
+    console.error('Error handling payment failure:', error);
   }
 }
 
 async function handleSubscriptionUpdate(subscription) {
   try {
-    logger.info('Subscription updated', {
+    console.log('Subscription updated', {
       customerId: subscription.customer,
       status: subscription.status
     });
 
     // TODO: Update subscription status in database
   } catch (error) {
-    logger.error('Error handling subscription update:', error);
+    console.error('Error handling subscription update:', error);
   }
 }
 

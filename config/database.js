@@ -1,6 +1,6 @@
 import pg from 'pg';
 import dotenv from 'dotenv';
-import logger from '../utils/logger.js';
+
 
 dotenv.config({ path: '.env.local' });
 
@@ -15,7 +15,7 @@ export const pool = new Pool({
 });
 
 pool.on('error', (err) => {
-  logger.error('Unexpected error on idle client', err);
+  console.error('Unexpected error on idle client', err);
 });
 
 // ==========================================
@@ -25,14 +25,14 @@ pool.on('error', (err) => {
 export async function initializeDatabase() {
   try {
     const client = await pool.connect();
-    logger.info('✅ Connected to PostgreSQL');
+    console.log('✅ Connected to PostgreSQL');
 
     // Create tables if they don't exist
     await createTables(client);
 
     client.release();
   } catch (error) {
-    logger.error('Database initialization error:', error);
+    console.error('Database initialization error:', error);
     throw error;
   }
 }
@@ -121,13 +121,13 @@ async function createTables(client) {
       await client.query(query);
     } catch (error) {
       if (!error.message.includes('already exists')) {
-        logger.error('Error creating table:', error);
+        console.error('Error creating table:', error);
         throw error;
       }
     }
   }
 
-  logger.info('✅ All tables initialized');
+  console.log('✅ All tables initialized');
 }
 
 // ==========================================
@@ -139,7 +139,7 @@ export async function query(text, params = []) {
     const result = await pool.query(text, params);
     return result;
   } catch (error) {
-    logger.error('Database query error:', {
+    console.error('Database query error:', {
       query: text,
       error: error.message
     });
@@ -153,5 +153,5 @@ export async function query(text, params = []) {
 
 export async function closeDatabase() {
   await pool.end();
-  logger.info('✅ Database connection closed');
+  console.log('✅ Database connection closed');
 }

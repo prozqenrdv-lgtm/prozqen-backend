@@ -1,5 +1,5 @@
 import { callClaude, calculateTokenCost } from '../config/anthropic.js';
-import logger from '../utils/logger.js';
+
 
 /**
  * AGENT #1: PROSPECT FINDER
@@ -12,7 +12,7 @@ import logger from '../utils/logger.js';
 
 export async function prospectFinderAgent(criteria) {
   try {
-    logger.info('🔍 Prospect Finder agent started', { criteria });
+    console.log('🔍 Prospect Finder agent started', { criteria });
 
     const prompt = `Tu es un expert en prospection immobilière. Basé sur les critères fournis, identifie le profil exact du prospect idéal et crée une stratégie de recherche optimale.
 
@@ -63,7 +63,7 @@ RÉPONDS UNIQUEMENT EN JSON avec cette structure exacte:
     try {
       result = JSON.parse(response.content);
     } catch (error) {
-      logger.warn('Failed to parse Claude response, returning raw content');
+      console.warn('Failed to parse Claude response, returning raw content');
       result = {
         raw_response: response.content,
         error: 'Could not parse JSON'
@@ -73,7 +73,7 @@ RÉPONDS UNIQUEMENT EN JSON avec cette structure exacte:
     // Calculate cost
     const cost = calculateTokenCost(response.tokens.input, response.tokens.output);
 
-    logger.info('✅ Prospect Finder agent completed', {
+    console.log('✅ Prospect Finder agent completed', {
       tokensUsed: response.tokens.total,
       cost: `$${cost.toFixed(6)}`
     });
@@ -89,7 +89,7 @@ RÉPONDS UNIQUEMENT EN JSON avec cette structure exacte:
     };
 
   } catch (error) {
-    logger.error('❌ Prospect Finder agent error:', error);
+    console.error('❌ Prospect Finder agent error:', error);
     return {
       success: false,
       agent: 'prospect-finder',

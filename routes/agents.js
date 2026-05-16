@@ -1,5 +1,5 @@
 import express from 'express';
-import logger from '../utils/logger.js';
+
 import { authenticateToken } from './auth.js';
 import { runAgentPipeline } from '../agents/orchestrator.js';
 import { query } from '../config/database.js';
@@ -73,7 +73,7 @@ router.post('/run-pipeline', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Agent pipeline error:', error);
+    console.error('Agent pipeline error:', error);
     res.status(500).json({ error: 'Pipeline execution failed' });
   }
 });
@@ -102,7 +102,7 @@ router.get('/history', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Get history error:', error);
+    console.error('Get history error:', error);
     res.status(500).json({ error: 'Failed to get history' });
   }
 });
@@ -136,7 +136,7 @@ router.get('/stats', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Get stats error:', error);
+    console.error('Get stats error:', error);
     res.status(500).json({ error: 'Failed to get stats' });
   }
 });

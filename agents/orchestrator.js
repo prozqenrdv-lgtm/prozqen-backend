@@ -1,4 +1,4 @@
-import logger from '../utils/logger.js';
+
 import { prospectFinderAgent } from './prospectFinder.js';
 import { messageGeneratorAgent } from './messageGenerator.js';
 import { followupAutomationAgent } from './followupAutomation.js';
@@ -20,7 +20,7 @@ export async function runAgentPipeline(userId, pipelineConfig) {
   let totalCost = 0;
 
   try {
-    logger.info('🔄 Starting agent pipeline', {
+    console.log('🔄 Starting agent pipeline', {
       userId,
       agents: pipelineConfig.agents,
       stage: pipelineConfig.stage
@@ -31,7 +31,7 @@ export async function runAgentPipeline(userId, pipelineConfig) {
     // ==========================================
 
     if (pipelineConfig.agents.includes('prospect-finder')) {
-      logger.info('▶️ Running Prospect Finder agent...');
+      console.log('▶️ Running Prospect Finder agent...');
 
       const prospectResult = await prospectFinderAgent(pipelineConfig.criteria);
       results.push(prospectResult);
@@ -47,7 +47,7 @@ export async function runAgentPipeline(userId, pipelineConfig) {
     // ==========================================
 
     if (pipelineConfig.agents.includes('message-generator') && pipelineConfig.prospects) {
-      logger.info('▶️ Running Message Generator agent...');
+      console.log('▶️ Running Message Generator agent...');
 
       for (const prospect of pipelineConfig.prospects) {
         const messageResult = await messageGeneratorAgent(prospect, pipelineConfig.userContext);
@@ -68,7 +68,7 @@ export async function runAgentPipeline(userId, pipelineConfig) {
     // ==========================================
 
     if (pipelineConfig.agents.includes('followup-automation') && pipelineConfig.prospects) {
-      logger.info('▶️ Running Follow-up Automation agent...');
+      console.log('▶️ Running Follow-up Automation agent...');
 
       for (const prospect of pipelineConfig.prospects) {
         const communicationHistory = await getCommunicationHistory(prospect.id);
@@ -99,7 +99,7 @@ export async function runAgentPipeline(userId, pipelineConfig) {
       pipelineConfig.prospects &&
       pipelineConfig.userPlan === 'PRO'
     ) {
-      logger.info('▶️ Running Deal Analyzer agent...');
+      console.log('▶️ Running Deal Analyzer agent...');
 
       const dealResult = await dealAnalyzerAgent(
         pipelineConfig.prospects,
@@ -125,7 +125,7 @@ export async function runAgentPipeline(userId, pipelineConfig) {
       pipelineConfig.crmConfig &&
       pipelineConfig.userPlan === 'PRO'
     ) {
-      logger.info('▶️ Running CRM Sync agent...');
+      console.log('▶️ Running CRM Sync agent...');
 
       for (const prospect of pipelineConfig.prospects) {
         const crmResult = await crmSyncAgent(prospect, pipelineConfig.crmConfig);
@@ -149,7 +149,7 @@ export async function runAgentPipeline(userId, pipelineConfig) {
       pipelineConfig.agents.includes('performance-optimizer') &&
       pipelineConfig.userPlan === 'PRO'
     ) {
-      logger.info('▶️ Running Performance Optimizer agent...');
+      console.log('▶️ Running Performance Optimizer agent...');
 
       const performanceData = await getPerformanceData(userId);
       const conversions = await getConversions(userId);
@@ -188,7 +188,7 @@ export async function runAgentPipeline(userId, pipelineConfig) {
       resultCount: results.length
     });
 
-    logger.info('✅ Agent pipeline completed', {
+    console.log('✅ Agent pipeline completed', {
       userId,
       tokensUsed: totalTokens,
       cost: `$${totalCost.toFixed(6)}`,
@@ -210,7 +210,7 @@ export async function runAgentPipeline(userId, pipelineConfig) {
     };
 
   } catch (error) {
-    logger.error('❌ Agent pipeline error:', error);
+    console.error('❌ Agent pipeline error:', error);
 
     // Log failure
     await logPipelineExecution(userId, {
@@ -239,7 +239,7 @@ async function saveGeneratedMessages(prospectId, messages) {
       [JSON.stringify(messages), prospectId]
     );
   } catch (error) {
-    logger.error('Error saving generated messages:', error);
+    console.error('Error saving generated messages:', error);
   }
 }
 
@@ -251,7 +251,7 @@ async function getCommunicationHistory(prospectId) {
     );
     return result.rows;
   } catch (error) {
-    logger.error('Error getting communication history:', error);
+    console.error('Error getting communication history:', error);
     return [];
   }
 }
@@ -259,9 +259,9 @@ async function getCommunicationHistory(prospectId) {
 async function scheduleFollowups(prospectId, relances) {
   try {
     // Implementation depends on your scheduling system
-    logger.info('Follow-ups scheduled for prospect:', prospectId);
+    console.log('Follow-ups scheduled for prospect:', prospectId);
   } catch (error) {
-    logger.error('Error scheduling follow-ups:', error);
+    console.error('Error scheduling follow-ups:', error);
   }
 }
 
@@ -274,7 +274,7 @@ async function updateProspectScores(analyzedProspects) {
       );
     }
   } catch (error) {
-    logger.error('Error updating prospect scores:', error);
+    console.error('Error updating prospect scores:', error);
   }
 }
 
@@ -285,7 +285,7 @@ async function saveCrmSync(prospectId, crmData) {
       [JSON.stringify(crmData), prospectId]
     );
   } catch (error) {
-    logger.error('Error saving CRM sync:', error);
+    console.error('Error saving CRM sync:', error);
   }
 }
 
@@ -303,7 +303,7 @@ async function getPerformanceData(userId) {
       conversion_rate: ((parseInt(data.conversions) / parseInt(data.total_messages)) * 100).toFixed(2)
     };
   } catch (error) {
-    logger.error('Error getting performance data:', error);
+    console.error('Error getting performance data:', error);
     return { total_messages_sent: 0, conversions: 0, conversion_rate: 0 };
   }
 }
@@ -316,7 +316,7 @@ async function getConversions(userId) {
     );
     return result.rows;
   } catch (error) {
-    logger.error('Error getting conversions:', error);
+    console.error('Error getting conversions:', error);
     return [];
   }
 }
@@ -328,7 +328,7 @@ async function saveOptimizations(userId, recommendations) {
       [JSON.stringify(recommendations), userId]
     );
   } catch (error) {
-    logger.error('Error saving optimizations:', error);
+    console.error('Error saving optimizations:', error);
   }
 }
 
@@ -339,7 +339,7 @@ async function updateUserTokens(userId, tokensUsed) {
       [tokensUsed, userId]
     );
   } catch (error) {
-    logger.error('Error updating user tokens:', error);
+    console.error('Error updating user tokens:', error);
   }
 }
 
@@ -351,6 +351,6 @@ async function logPipelineExecution(userId, data) {
       [userId, data.tokensUsed || 0, data.status, JSON.stringify(data), JSON.stringify(data)]
     );
   } catch (error) {
-    logger.error('Error logging pipeline execution:', error);
+    console.error('Error logging pipeline execution:', error);
   }
 }

@@ -1,6 +1,6 @@
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import logger from '../utils/logger.js';
+
 import { authenticateToken } from './auth.js';
 import { query } from '../config/database.js';
 
@@ -40,7 +40,7 @@ router.get('/', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Get prospects error:', error);
+    console.error('Get prospects error:', error);
     res.status(500).json({ error: 'Failed to get prospects' });
   }
 });
@@ -66,7 +66,7 @@ router.post('/', authenticateToken, async (req, res) => {
       [id, req.user.userId, name, email, phone, linkedin_url, company, job_title, city]
     );
 
-    logger.info('✅ Prospect created', { prospectName: name, prospectEmail: email });
+    console.log('✅ Prospect created', { prospectName: name, prospectEmail: email });
 
     res.status(201).json({
       success: true,
@@ -79,7 +79,7 @@ router.post('/', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Create prospect error:', error);
+    console.error('Create prospect error:', error);
     res.status(500).json({ error: 'Failed to create prospect' });
   }
 });
@@ -106,7 +106,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Get prospect error:', error);
+    console.error('Get prospect error:', error);
     res.status(500).json({ error: 'Failed to get prospect' });
   }
 });
@@ -136,7 +136,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
       [name, email, status, notes, req.params.id]
     );
 
-    logger.info('✅ Prospect updated', { prospectId: req.params.id });
+    console.log('✅ Prospect updated', { prospectId: req.params.id });
 
     res.json({
       success: true,
@@ -144,7 +144,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Update prospect error:', error);
+    console.error('Update prospect error:', error);
     res.status(500).json({ error: 'Failed to update prospect' });
   }
 });
@@ -165,7 +165,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Prospect not found' });
     }
 
-    logger.info('✅ Prospect deleted', { prospectId: req.params.id });
+    console.log('✅ Prospect deleted', { prospectId: req.params.id });
 
     res.json({
       success: true,
@@ -173,7 +173,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Delete prospect error:', error);
+    console.error('Delete prospect error:', error);
     res.status(500).json({ error: 'Failed to delete prospect' });
   }
 });
@@ -213,7 +213,7 @@ router.post('/import', authenticateToken, async (req, res) => {
       imported.push(id);
     }
 
-    logger.info('✅ Prospects imported', { count: imported.length });
+    console.log('✅ Prospects imported', { count: imported.length });
 
     res.json({
       success: true,
@@ -222,7 +222,7 @@ router.post('/import', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Import prospects error:', error);
+    console.error('Import prospects error:', error);
     res.status(500).json({ error: 'Failed to import prospects' });
   }
 });

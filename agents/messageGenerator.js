@@ -1,5 +1,5 @@
 import { callClaude, calculateTokenCost } from '../config/anthropic.js';
-import logger from '../utils/logger.js';
+
 
 /**
  * AGENT #2: MESSAGE GENERATOR
@@ -12,7 +12,7 @@ import logger from '../utils/logger.js';
 
 export async function messageGeneratorAgent(prospect, userContext) {
   try {
-    logger.info('✍️ Message Generator agent started', {
+    console.log('✍️ Message Generator agent started', {
       prospectName: prospect.name,
       prospectTitle: prospect.job_title
     });
@@ -74,7 +74,7 @@ RÉPONDS UNIQUEMENT EN JSON:
     try {
       result = JSON.parse(response.content);
     } catch (error) {
-      logger.warn('Failed to parse Claude response');
+      console.warn('Failed to parse Claude response');
       result = {
         raw_response: response.content,
         error: 'Could not parse JSON'
@@ -84,7 +84,7 @@ RÉPONDS UNIQUEMENT EN JSON:
     // Calculate cost
     const cost = calculateTokenCost(response.tokens.input, response.tokens.output);
 
-    logger.info('✅ Message Generator agent completed', {
+    console.log('✅ Message Generator agent completed', {
       prospectName: prospect.name,
       tokensUsed: response.tokens.total,
       cost: `$${cost.toFixed(6)}`
@@ -102,7 +102,7 @@ RÉPONDS UNIQUEMENT EN JSON:
     };
 
   } catch (error) {
-    logger.error('❌ Message Generator agent error:', error);
+    console.error('❌ Message Generator agent error:', error);
     return {
       success: false,
       agent: 'message-generator',

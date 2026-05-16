@@ -1,5 +1,5 @@
 import express from 'express';
-import logger from '../utils/logger.js';
+
 import { authenticateToken } from './auth.js';
 import { query } from '../config/database.js';
 
@@ -37,7 +37,7 @@ router.get('/balance', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Get token balance error:', error);
+    console.error('Get token balance error:', error);
     res.status(500).json({ error: 'Failed to get token balance' });
   }
 });
@@ -87,7 +87,7 @@ router.get('/history', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Get token history error:', error);
+    console.error('Get token history error:', error);
     res.status(500).json({ error: 'Failed to get token history' });
   }
 });
@@ -119,7 +119,7 @@ router.get('/usage-by-agent', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Get usage by agent error:', error);
+    console.error('Get usage by agent error:', error);
     res.status(500).json({ error: 'Failed to get usage breakdown' });
   }
 });
@@ -157,7 +157,7 @@ router.post('/reset', authenticateToken, async (req, res) => {
       [limit, req.user.userId]
     );
 
-    logger.info('✅ Tokens reset for development', { userId: req.user.userId, newLimit: limit });
+    console.log('✅ Tokens reset for development', { userId: req.user.userId, newLimit: limit });
 
     res.json({
       success: true,
@@ -166,7 +166,7 @@ router.post('/reset', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Reset tokens error:', error);
+    console.error('Reset tokens error:', error);
     res.status(500).json({ error: 'Failed to reset tokens' });
   }
 });

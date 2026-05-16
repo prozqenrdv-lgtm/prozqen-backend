@@ -1,5 +1,5 @@
 import { callClaude, calculateTokenCost } from '../config/anthropic.js';
-import logger from '../utils/logger.js';
+
 
 /**
  * AGENT #5: CRM SYNC (PRO ONLY)
@@ -12,7 +12,7 @@ import logger from '../utils/logger.js';
 
 export async function crmSyncAgent(prospect, crmConfig) {
   try {
-    logger.info('🔗 CRM Sync agent started', {
+    console.log('🔗 CRM Sync agent started', {
       prospectName: prospect.name,
       crmType: crmConfig.type
     });
@@ -71,7 +71,7 @@ RÉPONDS UNIQUEMENT EN JSON:
     try {
       result = JSON.parse(response.content);
     } catch (error) {
-      logger.warn('Failed to parse Claude response');
+      console.warn('Failed to parse Claude response');
       result = {
         raw_response: response.content,
         error: 'Could not parse JSON'
@@ -81,7 +81,7 @@ RÉPONDS UNIQUEMENT EN JSON:
     // Calculate cost
     const cost = calculateTokenCost(response.tokens.input, response.tokens.output);
 
-    logger.info('✅ CRM Sync agent completed', {
+    console.log('✅ CRM Sync agent completed', {
       prospectName: prospect.name,
       crmType: crmConfig.type,
       tokensUsed: response.tokens.total,
@@ -100,7 +100,7 @@ RÉPONDS UNIQUEMENT EN JSON:
     };
 
   } catch (error) {
-    logger.error('❌ CRM Sync agent error:', error);
+    console.error('❌ CRM Sync agent error:', error);
     return {
       success: false,
       agent: 'crm-sync',

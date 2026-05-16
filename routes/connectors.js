@@ -1,5 +1,5 @@
 import express from 'express';
-import logger from '../utils/logger.js';
+
 import { authenticateToken } from './auth.js';
 
 const router = express.Router();
@@ -20,7 +20,7 @@ router.post('/linkedin/sync', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'LinkedIn profile URL required' });
     }
 
-    logger.info('LinkedIn sync initiated', { userId: req.user.userId, profileUrl: profile_url });
+    console.log('LinkedIn sync initiated', { userId: req.user.userId, profileUrl: profile_url });
 
     // TODO: Implement LinkedIn OAuth + data fetch
     // For MVP: placeholder response
@@ -33,7 +33,7 @@ router.post('/linkedin/sync', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('LinkedIn sync error:', error);
+    console.error('LinkedIn sync error:', error);
     res.status(500).json({ error: 'LinkedIn sync failed' });
   }
 });
@@ -54,7 +54,7 @@ router.post('/email/send', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'prospect_ids, subject, and body required' });
     }
 
-    logger.info('Email campaign initiated', {
+    console.log('Email campaign initiated', {
       userId: req.user.userId,
       prospectCount: prospect_ids.length
     });
@@ -71,7 +71,7 @@ router.post('/email/send', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Email send error:', error);
+    console.error('Email send error:', error);
     res.status(500).json({ error: 'Email send failed' });
   }
 });
@@ -92,7 +92,7 @@ router.post('/sheets/sync', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'spreadsheet_id required' });
     }
 
-    logger.info('Google Sheets sync initiated', {
+    console.log('Google Sheets sync initiated', {
       userId: req.user.userId,
       spreadsheetId: spreadsheet_id
     });
@@ -109,7 +109,7 @@ router.post('/sheets/sync', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Sheets sync error:', error);
+    console.error('Sheets sync error:', error);
     res.status(500).json({ error: 'Sheets sync failed' });
   }
 });
@@ -134,7 +134,7 @@ router.post('/crm/sync', authenticateToken, async (req, res) => {
       return res.status(400).json({ error: 'Invalid CRM type' });
     }
 
-    logger.info('CRM sync initiated', {
+    console.log('CRM sync initiated', {
       userId: req.user.userId,
       crmType: crm_type
     });
@@ -151,7 +151,7 @@ router.post('/crm/sync', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('CRM sync error:', error);
+    console.error('CRM sync error:', error);
     res.status(500).json({ error: 'CRM sync failed' });
   }
 });
@@ -174,7 +174,7 @@ router.get('/calendly/status', authenticateToken, async (req, res) => {
     });
 
   } catch (error) {
-    logger.error('Calendly status error:', error);
+    console.error('Calendly status error:', error);
     res.status(500).json({ error: 'Failed to get Calendly status' });
   }
 });
