@@ -1,113 +1,55 @@
 import { callClaude, calculateTokenCost } from '../config/anthropic.js';
 
-
-/**
- * AGENT #1: PROSPECT FINDER
- * Identifie et qualifie les prospects selon les critères utilisateur
- * 
- * Input: Critères (localité, profil, type bien, budget, etc.)
- * Output: Liste de caractéristiques du prospect idéal + stratégie de recherche
- * Tokens: ~50 tokens par exécution
- */
-
 export async function prospectFinderAgent(criteria) {
   try {
-    console.log('🔍 Prospect Finder agent started', { criteria });
+    console.log('🔍 Prospect Finder started', { criteria });
 
-    const prompt = `Tu es un expert en prospection immobilière. Basé sur les critères fournis, identifie le profil exact du prospect idéal et crée une stratégie de recherche optimale.
+    const prompt = `Tu es un expert en prospection immobilière. Basé sur ces critères, identifie le profil du prospect idéal et crée une stratégie de recherche.
 
-CRITÈRES FOURNIS:
+CRITÈRES:
 ${JSON.stringify(criteria, null, 2)}
 
-RÉPONDS UNIQUEMENT EN JSON avec cette structure exacte:
+Réponds UNIQUEMENT en JSON valide (sans backticks, sans markdown):
 {
   "prospect_profile": {
-    "job_titles": ["liste des titres"],
-    "job_keywords": ["mots-clés métier"],
-    "company_types": ["type d'entreprise"],
-    "company_keywords": ["mots-clés entreprise"],
-    "industries": ["secteurs"],
-    "locations": ["localisations"],
-    "company_size": "small|medium|large|enterprise",
-    "buying_power": "high|medium|low",
-    "urgency": "high|medium|low"
+    "job_titles": ["titre 1", "titre 2"],
+    "industries": ["secteur 1"],
+    "locations": ["ville 1"],
+    "buying_power": "high"
   },
   "search_strategy": {
-    "linkedin_search_terms": ["requête 1", "requête 2"],
-    "boolean_search": "requête booléenne",
+    "linkedin_search_terms": ["terme 1", "terme 2"],
     "estimated_reach": 150,
-    "priority_signals": ["signal 1", "signal 2"],
-    "outreach_angle": "angle de prospection personnalisé"
+    "outreach_angle": "angle personnalisé"
   },
-  "qualifying_questions": [
-    "question 1",
-    "question 2"
-  ],
-  "objection_handlers": {
-    "too_busy": "réponse",
-    "not_interested": "réponse"
-  }
+  "qualifying_questions": ["question 1", "question 2"]
 }`;
 
-    const response = await callClaude([
-      {
-        role: 'user',
-        content: prompt
-      }
-    ], {
-      temperature: 0.7
-    });
+    const response = await callClaude([{ role: 'user', content: prompt }], { temperature: 0.7 });
 
-    // Parse JSON response
-    let result;
-    try {
-      result = JSON.parse(response.content);
-    } catch (error) {
-      console.warn('Failed to parse Claude response, returning raw content');
-      result = {
-        raw_response: response.content,
-        error: 'Could not parse JSON'
-      };
-    }
-
-    // Calculate cost
+    const result = parseJSON(response.content);
     const cost = calculateTokenCost(response.tokens.input, response.tokens.output);
 
-    console.log('✅ Prospect Finder agent completed', {
-      tokensUsed: response.tokens.total,
-      cost: `$${cost.toFixed(6)}`
-    });
+    console.log('✅ Prospect Finder done', { tokens: response.tokens.total });
 
     return {
       success: true,
       agent: 'prospect-finder',
       data: result,
-      tokens: {
-        used: response.tokens.total,
-        cost: cost
-      }
+      tokens: { used: response.tokens.total, cost }
     };
-
   } catch (error) {
-    console.error('❌ Prospect Finder agent error:', error);
-    return {
-      success: false,
-      agent: 'prospect-finder',
-      error: error.message
-    };
+    console.error('❌ Prospect Finder error:', error.message);
+    return { success: false, agent: 'prospect-finder', error: error.message };
   }
 }
 
-/**
- * Helper: Extract search terms from criteria
- */
-export function extractSearchTerms(criteria) {
-  const terms = [];
-
-  if (criteria.city) terms.push(criteria.city);
-  if (criteria.property_type) terms.push(criteria.property_type);
-  if (criteria.investor_type) terms.push(criteria.investor_type);
-  if (criteria.budget) terms.push(`budget ${criteria.budget}`);
-
-  return terms;
+function parseJSON(text) {
+  try {
+    // Remove markdown backticks if present
+    const clean = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    return JSON.parse(clean);
+  } catch {
+    return { raw_response: text };
+  }
 }
